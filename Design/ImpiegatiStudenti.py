@@ -1,10 +1,10 @@
 import re 
-import datetime
+from datetime import date
 from abc import ABC, abstractmethod 
 
 class CodiceFiscale: 
     def __new__(cls, codice_fiscale: str):
-        if len(codice_fiscale) != 16 or not re.fullmatch(r'^[A-Z]{6}[0-9]{2}[A-Z]{1}[0-9]{2}[A-Z]{1}[0-9]{3}[A-Z]{1}$', codice_fiscale):
+        if not re.fullmatch(r'^[A-Z]{6}[0-9]{2}[A-Z]{1}[0-9]{2}[A-Z]{1}[0-9]{3}[A-Z]{1}$', codice_fiscale):
             raise ValueError(f"Errore. Codice Fiscale {codice_fiscale} non valido.")
         
         istanza = super().__new__(cls)
@@ -20,27 +20,15 @@ class CodiceFiscale:
     def __hash__(self):
         return hash(self.codice_fiscale)
 
-class DataNascita:
-    def __new__(cls, data_nascita: str):
-        if not re.fullmatch(r'^(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[0-2])/((19|20)\d{2})$', data_nascita):
-            raise ValueError(f"Errore. Data di nascita {data_nascita} non valida.")
-        
-        try:
-            parsed = datetime.datetime.strptime(data_nascita, "%d/%m/%Y").date()
-        except ValueError:
-            raise ValueError(f"Errore. La data '{data_nascita}' non esiste nel calendario.")
 
-        today = datetime.date.today()
-        max_data_valida = datetime.date(1895, 1, 1)
- 
-        if parsed > today:
-            raise ValueError(f"Errore. La data '{data_nascita}' è nel futuro.")
-        if parsed < max_data_valida:
-            raise ValueError(f"Errore. La data '{data_nascita}' è troppo vecchia.")
- 
-        istanza = super().__new__(cls)
-        istanza.data_nascita = parsed
-        return istanza 
+class DataGE1895(date):
+
+    def __new__(cls, year: int, month: int, day: int) -> Self: #self perché deve costruire un nuovo oggetto della classe 
+
+        if year < 1895:
+            raise ValueError(f"La data {day}/{month}/{year} deve essere successiva all'1 gennaio 1895.")
+
+        return super().__new__(cls, year=year, month=month, day=day)
     
     def __str__(self):
         return self.data_nascita.strftime("%d/%m/%Y")
@@ -100,8 +88,6 @@ class Persona:
 
 class PosizioneMilitare:
     def __init__(self, nome: str):
-        if not isinstance(nome, str) or nome.strip == "":
-            raise ValueError("Inserire una posizione militare valida.")
         self.nome = nome 
     
     def __str__(self):
