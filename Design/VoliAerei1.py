@@ -2,7 +2,7 @@ from typing import Self
 from datetime import date
 import re
 
-class Durata(int):
+class IntGZ(int):
     def __new__(cls, d: Self | int | float | str | bool) -> Self:
         value: int = super().__new__(cls, d)
         if value <= 0:
@@ -10,7 +10,7 @@ class Durata(int):
         return value 
     
 
-class Abitanti(int):
+class IntGEZ(int):
     def __new__(cls, a: Self | int | float | str | bool) -> Self:
         value: int = super().__new__(cls, a)
         if value < 0:
@@ -18,11 +18,12 @@ class Abitanti(int):
         return value 
     
 
-class Data1900(date):
-    def __new__(cls, year: int) -> Self:
-        if year < 1900 or year > date.time.today():
-            raise ValueError(f"L'anno {year} non è valido.")
-        return super().__new__(cls, year=year)
+class IntG1900(int):
+    def __new__(cls, y: Self) -> Self:
+        value: int = super().__nw__(cls, y)
+        if y < 1900:
+            raise ValueError(f"L'anno {y} non è valido.")
+        return super().__new__(cls, year=y)
     
 
 class CodiceAeroporto(str):
