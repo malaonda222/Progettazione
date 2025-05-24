@@ -2,28 +2,28 @@ from typing import Self
 from datetime import date
 import re
 
-class IntGZ(int):
-    def __new__(cls, d: Self | int | float | str | bool) -> Self:
-        value: int = super().__new__(cls, d)
-        if value <= 0:
-            raise ValueError(f"Il valore {d} deve essere maggiore di zero.")
-        return value 
+class Durata(int):
+    def __new__(cls, minuti: Self | int | float | str | bool) -> Self:
+        minuti: int = super().__new__(cls, minuti)
+        if minuti <= 0:
+            raise ValueError(f"Il valore {minuti} deve essere maggiore di zero.")
+        return minuti 
     
 
-class IntGEZ(int):
-    def __new__(cls, a: Self | int | float | str | bool) -> Self:
-        value: int = super().__new__(cls, a)
-        if value < 0:
-            raise ValueError(f"Il valore {a} deve essere maggiore di zero.")
-        return value 
+class Abitanti(int):
+    def __new__(cls, abitanti: Self | int | float | str | bool) -> Self:
+        abitanti: int = super().__new__(cls, abitanti)
+        if abitanti < 0:
+            raise ValueError(f"Il valore {abitanti} deve essere maggiore di zero.")
+        return abitanti 
     
 
-class IntG1900(int):
-    def __new__(cls, y: Self) -> Self:
-        value: int = super().__nw__(cls, y)
-        if y < 1900:
-            raise ValueError(f"L'anno {y} non è valido.")
-        return super().__new__(cls, year=y)
+class Data1900(int):
+    def __new__(cls, anno: Self) -> Self:
+        anno: int = super().__new__(cls, anno)
+        if anno < 1900:
+            raise ValueError(f"L'anno {anno} non è valido.")
+        return anno
     
 
 class CodiceAeroporto(str):
