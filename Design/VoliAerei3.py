@@ -22,8 +22,8 @@ class Volo:
 
 
 class Aeroporto:
-    _codice: CodiceAeroporto
-    _nome: str 
+    _codice: CodiceAeroporto #<<imm>> noto alla nascita
+    _nome: str #noto alla nascita
 
     def __init__(self, codice: CodiceAeroporto, nome: str):
         self._codice = codice 
@@ -43,8 +43,8 @@ class Aeroporto:
     
 
 class Città:
-    _nome: str 
-    _abitanti: Abitanti 
+    _nome: str #noto alla nascita
+    _abitanti: Abitanti #noto alla nascita
 
     def __init__(self, nome: str, abitanti: Abitanti):
         self.set_nome(nome)
@@ -67,8 +67,8 @@ class Città:
 
 
 class CompagniaAerea:
-    _nome: str 
-    _anno_fondazione: Data1900 
+    _nome: str #noto alla nascita
+    _anno_fondazione: Data1900 #<<imm>> noto alla nascita
 
     def __init__(self, nome: str, anno_fondazione: Data1900):
         self._anno_fondazione = anno_fondazione
@@ -89,10 +89,9 @@ class CompagniaAerea:
 
 
 class Nazione:
-    _nome: str 
+    _nome: str #noto alla nascita
 
     def __init__(self, nome: str):
-        
         self.set_nome(nome)
 
     def set_nome(self, nome: str) -> None:
