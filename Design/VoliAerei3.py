@@ -12,7 +12,7 @@ class Volo:
         self.set_durata_minuti(durata_minuti)
 
     def set_durata_minuti(self, durata_minuti: Durata) -> None:
-        self._durata_minuti = durata_minuti
+        self._durata_minuti: Durata = durata_minuti
 
     def get_codice(self) -> str:
         return self._codice 
@@ -33,7 +33,7 @@ class Aeroporto:
     def set_nome(self, nome: str) -> None:
         if not isinstance(nome, str) or nome.strip() == "":
             raise ValueError("Errore. Nome non valido.")
-        self._nome = nome 
+        self._nome: str = nome 
 
     def get_nome(self) -> str:
         return self._nome 
@@ -53,10 +53,10 @@ class Città:
     def set_nome(self, nome: str) -> None:
         if not isinstance(nome, str) or nome.strip() == "":
             raise ValueError("Errore. Nome non valido.")
-        self._nome = nome 
+        self._nome: str = nome 
 
     def set_abitanti(self, abitanti: Abitanti) -> None:
-        self._abitanti = abitanti 
+        self._abitanti: Abitanti = abitanti 
 
     def get_nome(self) -> str:
         return self._nome 
@@ -78,7 +78,7 @@ class CompagniaAerea:
     def set_nome(self, nome: str) -> None:
         if not isinstance(nome, str) or nome.strip() == "":
             raise ValueError("Errore. Nome non valido.")
-        self._nome = nome
+        self._nome: str = nome
     
     def get_nome(self) -> str:
         return self._nome 
@@ -97,7 +97,7 @@ class Nazione:
     def set_nome(self, nome: str) -> None:
         if not isinstance(nome, str) or nome.strip() == "":
             raise ValueError("Errore. Nome non valido.")
-        self._nome = nome 
+        self._nome: str = nome 
 
     def get_nome(self) -> str:
         return self._nome 
