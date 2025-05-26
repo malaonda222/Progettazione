@@ -14,10 +14,10 @@ class Volo:
     def set_durata_minuti(self, durata_minuti: Durata) -> None:
         self._durata_minuti: Durata = durata_minuti
 
-    def get_codice(self) -> str:
+    def get_codice(self) -> CodiceAeroporto:
         return self._codice 
     
-    def get_durata_minuti(self) -> int:
+    def get_durata_minuti(self) -> Durata:
         return self._durata_minuti
 
 
@@ -38,7 +38,7 @@ class Aeroporto:
     def get_nome(self) -> str:
         return self._nome 
 
-    def get_codice(self) -> str:
+    def get_codice(self) -> CodiceAeroporto:
         return self._codice 
     
 
@@ -61,7 +61,7 @@ class Città:
     def get_nome(self) -> str:
         return self._nome 
     
-    def get_abitanti(self) -> int:
+    def get_abitanti(self) -> Abitanti:
         return self._abitanti 
     
 
@@ -83,7 +83,7 @@ class CompagniaAerea:
     def get_nome(self) -> str:
         return self._nome 
     
-    def get_anno_fondazione(self) -> int:
+    def get_anno_fondazione(self) -> Data1900:
         return self._anno_fondazione 
     
 
