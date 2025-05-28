@@ -42,7 +42,7 @@ class Aeroporto:
         return self._codice 
     
 
-class Città:
+class Citta:
     _nome: str #noto alla nascita
     _abitanti: Abitanti #noto alla nascita
 
@@ -87,21 +87,31 @@ class CompagniaAerea:
         return self._anno_fondazione 
     
 
-
 class Nazione:
-    _nome: str #noto alla nascita
+    _nome: str
+    _citta_nazione: set[Citta]
 
-    def __init__(self, nome: str):
+    def __init__(self, nome: str) -> None:
         self.set_nome(nome)
-
+        self._citta_nazione = set()
+    
     def set_nome(self, nome: str) -> None:
-        if not isinstance(nome, str) or nome.strip() == "":
-            raise ValueError("Errore. Nome non valido.")
-        self._nome: str = nome 
+        self._nome = nome 
 
-    def get_nome(self) -> str:
+    def nome(self) -> str:
         return self._nome 
     
+    def add_citta_nazione(self, c:Citta) -> None:
+        self._citta_nazione.add(c)
+
+    def remove_citta_nazione(self, c:Citta) -> None:
+        if c in self._citta_nazione: #o if c:
+            self._citta_nazione.remove(c)
+        else:
+            raise ValueError("La città non è presente nella lista delle città.")
+
+    def citta_nazione(self) -> frozenset[Citta]:
+        return frozenset(self._citta_nazione) 
 
 
     

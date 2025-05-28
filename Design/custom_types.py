@@ -103,6 +103,15 @@ class IntGZ(int):
             raise ValueError(f"Il valore {v} deve essere più grande di 0")
         return value 
     
+class IntGEZ(int):
+    #tipo di dato specializzato Intero >= 0
+
+    def __new__(cls, v: Self | int | float | str | bool) -> Self:
+        value: int = super().__new__(cls, v)
+        if value < 0:
+            raise ValueError(f"Il valore {v} deve essere più grande o uguale a0")
+        return value 
+    
 
 
     # Attenzione: in generale la differenza tra interi non dovrebbe essere toccata
