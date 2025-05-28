@@ -60,7 +60,7 @@ class Impiegato:
     def stipendio(self) -> Importo:
         return self._stipendio 
     
-    def afferenza(self) -> datetime.date:
+    def afferenza(self) -> datetime.date: #inserisco afferenza
         return self._afferenza
     
     def set_nome(self, nome: str) -> None:
