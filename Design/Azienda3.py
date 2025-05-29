@@ -101,7 +101,7 @@ class afferenza:
     def __init__(self, impiegato: Impiegato, dipartimento: Dipartimento, data_afferenza: datetime.date):
         self._impiegato = impiegato 
         self._dipartimento = dipartimento 
-        self.data_afferenza = data_afferenza        
+        self._data_afferenza = data_afferenza        
     
     def __hash__(self):
         return hash( (self.impiegato(), self.dipartimento()))

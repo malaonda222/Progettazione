@@ -1,5 +1,5 @@
 from custom_types import *
-from VoliAerei2 import *
+from Design.VoliAerei.VoliAerei2 import *
 
 
 class Volo:

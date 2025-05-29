@@ -1,7 +1,7 @@
 from custom_types import * 
 from datetime import timedelta
-from VoliAerei2 import *
-from VoliAerei3 import *
+from Design.VoliAerei.VoliAerei2 import *
+from Design.VoliAerei.VoliAerei3 import *
 
 
 class Volo:
