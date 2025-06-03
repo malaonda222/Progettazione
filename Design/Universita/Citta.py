@@ -1,5 +1,5 @@
 from Professore import *
-from Studente import *
+from Studente import Studente
 from Regione import *
 
 class Citta:

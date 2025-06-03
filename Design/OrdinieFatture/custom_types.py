@@ -33,7 +33,7 @@ class PartitaIva(int):
         raise ValueError(f"{partita_iva} non è una partita iva valida.")
 
 
-class Genere(StrEnum):
+class Genere(StrEnum): 
     uomo = auto()
     donna = auto()
 
