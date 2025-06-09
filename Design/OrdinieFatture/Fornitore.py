@@ -53,4 +53,3 @@ class Fornitore:
     
     def get_forn_ordine(self) -> frozenset[Ordine]:
         return frozenset(self._forn_ordine)
-    
