@@ -4,12 +4,18 @@ from datetime import date
 from enum import *
 
 
-
 class Telefono(str):
      def __new__(cls, tel: str | Self) -> Self:
         if re.fullmatch(r'^\d{10}$', tel):
             return super().__new__(cls, tel)
         raise ValueError(f"{tel} non è un numero di telefono italiano valido.")
+
+
+# class Telefono(str):
+#     def __new__(cls, v:int|float|str) -> Self:
+#         if not re.fullmatch(r'\+?[0-9]+', v):
+#             raise ValueError(f"Value v == {v} doesn't satisfy the standard")
+#         return str.__new__(cls, v)
      
 
 class Email(str):
@@ -31,6 +37,13 @@ class Genere(StrEnum):
     donna = auto()
 
 
+class Importo(float):
+    def __new__(cls, v:int|float|str) -> Self:
+        if v < 0:
+            raise ValueError(f"Value v == {v} must be >= 0")
+        return float.__new__(cls, v)
+
+
 class DataGE1895(date):
     def __new__(cls, year: int, month: int, day: int) -> Self: #self perché deve costruire un nuovo oggetto della classe 
         if year < 1895:
@@ -44,8 +57,6 @@ class CodiceFiscale(str):
         if re.fullmatch(r'^[A-Z]{6}[0-9]{2}[A-Z]{1}[0-9]{2}[A-Z]{1}[0-9]{3}[A-Z]{1}$', cff):
             return super().__new__(cls, cff)
         raise ValueError(f"{cff} non è un codice fiscale italiano valido.")
-    
-cff: CodiceFiscale = CodiceFiscale("AAABBB99C45J230H")
 
 
 class CodiceFiscale:
@@ -55,10 +66,6 @@ class CodiceFiscale:
             self.cf = cf
         else:
             raise ValueError(f"{cf} non è un codice fiscale italiano valido.")
-
-codfis = CodiceFiscale("AAABBB88J52K635K")
-codfis.cf 
-
 
 class Indirizzo:
     # campi dati:
