@@ -126,20 +126,31 @@ class _afferenza:
     def __eq__(self, other: Any) -> bool:
         if type(self) != type(other) or hash(self) != hash(other):
             return False 
-        return (self.impiegato(), self.dipartimento()) == (other.impiegato(), other.dipartimento())
+        return (self.impiegato() == self.dipartimento()) == (other.impiegato(), other.dipartimento())
 
 
 class Progetto:
     _nome: str #noto alla nascita
-    _budget: Importo 
+    _budget: Importo
+    _impiegati_progetti: dict[Impiegato, _imp_progetto]
 
     def __init__(self, nome: str, budget: Importo) -> None:
         self.set_nome(nome)
         self.set_budget(budget)
-
+        self.set_impiegato_progetto = set()
+        self._impiegati_progetti = set()
+    
     def set_nome(self, nome: str) -> None:
         self._nome = nome 
+
+    def add_impiegati_oggi(self, impiegato: Impiegato) -> None:
+        self.
     
+    def remove_impiegato_progetto(self, i_p: Impiegato) -> None:
+        if len(self._imp_progetto) >= 1 and i_p in self._impiegato_progetto:
+            self._impiegati_progetti.remove(i_p)
+        raise ValueError("Non ci sono impiegati da rimuovere.")
+
     def nome(self) -> str:
         return self._nome 
     
@@ -148,3 +159,84 @@ class Progetto:
 
     def budget(self) -> Importo:
         return self._budget 
+    
+    def get_impiegato_progetto(self) -> frozenset[_imp_progetto]:
+        return frozenset(self._impiegati_progetti.values())
+
+    def is_coinvolto(self, impiegato: Impiegato) -> bool:
+        return impiegato in self._impiegati_progetti
+
+    def __contains__(self, item: Any) -> bool:
+        if not isinstance(item, Impiegato):
+            return False 
+        return self.is_coinvolto(item) 
+    
+    '''def is_coinvolto_brutto(self, impiegato: Impiegato) -> bool:
+        #funziona perché abbiamo implementato has ed eq di _imp_progetto
+        l: _imp_progetto = _imp_progetto(self, impiegato, date.today())
+        return l in self._impiegati_progetti'''
+    
+    def add_impiegato(self, impiegato: Impiegato, data: date) -> None:
+        if impiegato in self._impiegati_progetti:
+            raise KeyError("Il progetto coinvolge già questo impiegato.")
+        l: _imp_progetto = _imp_progetto(self, impiegato, data)
+        self._impiegati_progetti(impiegato) = l
+
+    def remove_impiegato(self, impiegato: Impiegato, data: date) -> None:
+        if not impiegato in self._impiegati_progetti:
+            raise KeyError("Il progetto non coinvolge l'impiegato.")
+        del self._impiegati_progetti[impiegato]
+
+    def remove_impiegato2(self, impiegato: Impiegato, data: date) -> None:
+        try: 
+            del self._impiegati_progetti[impiegato]
+        except KeyError:
+            raise KeyError("Il progetto non coinvolge l'impiegato.")
+    
+    def data_coinvolgimento(self, impiegato: Impiegato) -> date:
+        try:
+            return self._impiegati_progetti[impiegato].data()
+        except KeyError:
+            raise KeyError("Il progetto non coinvolge l'impiegato.")
+        
+    def ultimo_impiegato_coinvolto(self) -> Impiegato:
+        if not self._impiegati_progetti():
+            raise RuntimeError("Il progetto non ha impiegati coinvolti.")
+        date_coinvolgimento: set[date] = set()
+        for l in self._impiegati_progetti.values():
+            date_coinvolgimento.add(l.data())
+       # date_coinvolgimento = [l.data() for l in self._impiegati_progetti.values()]
+        ultima_data: date = max(date_coinvolgimento)
+        for imp in self._impiegati_progetti:
+            if self.data_coinvolgimento(imp) == ultima_data:
+                return imp
+
+
+class _imp_progetto:
+    class _link:
+        _impiegato: Impiegato
+        _progetto: Progetto 
+        _data_afferenza_prog: date 
+
+        def __init__(self, impiegato: Impiegato, progetto: Progetto, data_afferenza_prog: date):
+            self._impiegato = impiegato 
+            self._progetto = progetto 
+            self._data_afferenza_prog = data_afferenza_prog
+        
+        def get_impiegato(self) -> Impiegato:
+            return self._impiegato 
+        
+        def get_progetto(self) -> Progetto:
+            return self._progetto
+        
+        def get_data_afferenza_prog(self) -> date:
+            return self._data_afferenza_prog
+        
+        def __hash__(self) -> int:
+            return hash(self.get_impiegato(), self.get_progetto)
+        
+        def __eq__(self, other: Any) -> bool:
+            if type(self) != type(other) or hash(self) != hash(other):
+                return False 
+            return (self.get_impiegato(), self.get_progetto()) == (other.get_impiegato(), other.get_progetto())
+
