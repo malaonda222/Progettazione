@@ -144,7 +144,7 @@ class Progetto:
         self._nome = nome 
 
     def add_impiegati_oggi(self, impiegato: Impiegato) -> None:
-        self.
+        self.add_impiegato(impiegato, 
     
     def remove_impiegato_progetto(self, i_p: Impiegato) -> None:
         if len(self._imp_progetto) >= 1 and i_p in self._impiegato_progetto:
