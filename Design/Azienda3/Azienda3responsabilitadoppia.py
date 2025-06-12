@@ -11,6 +11,7 @@ class Impiegato:
     _nascita: date #non facciamo il set perché è un dato immutabile e noto alla nascita
     _stipendio: Importo #noto alla nascita
     _afferenza: _afferenza | None #da associazione 'afferenza[0..1]' possibilmente non noto alla nascita
+    _progetti: dict[Progetto, _imp_prog._link]
     
     def __init__(self, nome: str, cognome: str, nascita: date, stipendio: Importo, dipartimento_aff: Dipartimento | None = None, data_afferenza: date | None = None) -> None:
         self.set_nome(nome)
@@ -18,7 +19,7 @@ class Impiegato:
         self._nascita = nascita
         self.set_stipendio(stipendio)
         self.set_link_afferenza(dipartimento_aff, data_afferenza)
-    
+        self._progetti = dict()
     
     def set_link_afferenza(self, dipartimento_aff: Dipartimento | None = None, data_afferenza: date | None = None) -> None:
         if (dipartimento_aff is None) != (data_afferenza is None):
@@ -66,6 +67,30 @@ class Impiegato:
     #     afferenza: str = f"che afferisce al dip. {self.afferenza().nome()} dal {self.data_afferenza()}" if self.dipartimento_afferenza else ""
     #     return f"Impiegato: {self.nome()} {self.cognome()} {afferenza}"
 
+    def progetti(self) -> frozenset[_imp_prog._link]:
+        return frozenset(self._progetti.values())
+    
+    def add_link_imp_prog(self, l: _imp_prog._link) -> None:
+        if l.progetto in self._progetti:
+            raise KeyError("Lavoro già nel progetto")
+        self._progetti[l.progetto()] = l
+
+    def remove_link_imp_prog(self, l: _imp_prog._link) -> None:
+        if l.progetto in self._progetti:
+            raise KeyError("Non lavoravo nel progetto")
+        del self._progetti[l.progetto()]
+
+
+    def add_progetto(self, progetto: Progetto, data: date) -> None:
+        if progetto in self._progetti:
+            raise KeyError("L'impiegato non è coinvolto nel progetto")
+        self._progetti[progetto] = _imp_prog(self, progetto, data)
+
+    def remove_progetto(self, progetto: Progetto) -> None:
+        try:
+            del self._progetti[progetto]
+        except KeyError:
+            raise KeyError("L'impiegato non è coinvolto nel progetto")
 
 class Dipartimento:
     _nome: str 
@@ -132,12 +157,13 @@ class _afferenza:
 class Progetto:
     _nome: str #noto alla nascita
     _budget: Importo
-    _coinvolti: dict[Impiegato, _imp_prog]
+    _imp_prog: set[_imp_prog._link]
 
     def __init__(self, nome: str, budget: Importo) -> None:
         self.set_nome(nome)
         self.set_budget(budget)
         self._coinvolti = dict()
+        self.set_imp_prog = set()
     
     def set_nome(self, nome: str) -> None:
         self._nome = nome 
@@ -150,19 +176,15 @@ class Progetto:
 
     def budget(self) -> Importo:
         return self._budget
+    
+    def add_imp_prog(self, imp_prog: _imp_prog) -> None:
+        self._imp_prog.add(imp_prog)
 
-    def coinvolti(self) -> frozenset[tuple[Impiegato, _imp_prog]]:
-        return frozenset(self._coinvolti.items())
-        # return frozenset((imp, data) for imp, data in self._coinvolti.items())
-
-    def add_impiegato(self, impiegato:Impiegato, data: date) -> None:
-        if impiegato in self._coinvolti:
-            raise ValueError(f"L'impiegato {impiegato.nome()} è già coinvolto nel progetto dal {self._coinvolti[impiegato]}")
+    def _add_link_prog(self, l: imp_prog._link) -> None:
+        if l.impiegato() in self._coinvolti:
+            raise KeyError("")
         self._coinvolti[impiegato] = data
 
-    def add_impiegato_oggi(self, impiegato: Impiegato) -> None:
-        self.add_impiegato(impiegato, date.today())
-    
     def remove_impiegato_progetto(self, impiegato: Impiegato) -> None:
         if not impiegato in self._coinvolti:
             raise ValueError(f"L'impiegato {impiegato.nome()} non era coinvolto nel progetto")
@@ -189,7 +211,7 @@ class Progetto:
         if impiegato in self._coinvolti:
             raise KeyError("Il progetto coinvolge già questo impiegato.")
         l: _imp_prog = _imp_prog(self, impiegato, data)
-        self._imp_prog[impiegato] = l
+        self._imp_prog(impiegato) = l
 
     def remove_impiegato(self, impiegato: Impiegato) -> None:
         if not impiegato in self._coinvolti:
@@ -232,7 +254,20 @@ class Progetto:
                 return impiegato
 
 
-class _imp_prog:
+class imp_prog:
+    
+    @classmethod
+    def add(cls, progetto: Progetto, impiegato: Impiegato, data: date) -> _link:
+        l = cls._link(progetto, impiegato, data)
+        progetto._add_link_imp_prog(l)
+        impiegato._add_link_imp_prog(l)
+        return l 
+    
+    def remove(cls, l: _link) -> None:
+        l.progetto()._remove_link_imp_prog(l)
+        l.impiegato()._remove_link_imp_prog(l)
+        del l 
+
     class _link:
         _impiegato: Impiegato
         _progetto: Progetto 
