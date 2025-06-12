@@ -258,4 +258,4 @@ class _imp_prog:
         def __eq__(self, other: Any) -> bool:
             if type(self) != type(other) or hash(self) != hash(other):
                 return False 
-            return (self.get_impiegato(), self.get_progetto()) == (other.get_impiegato(), other.get_progetto())bbbb
+            return (self.get_impiegato(), self.get_progetto()) == (other.get_impiegato(), other.get_progetto())
