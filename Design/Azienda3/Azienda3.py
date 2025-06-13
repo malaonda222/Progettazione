@@ -68,8 +68,8 @@ class Impiegato:
 
 
 class Dipartimento:
-    _nome: str 
-    _telefono: Telefono 
+    _nome: str  #noto alla nascita
+    _telefono: Telefono #noto alla nascita
     _impiegati: set[_afferenza] #da associazione 'afferenza' [0..*] certamente non noti alla nascita
 
     def __init__(self, nome: str, telefono: Telefono) -> None:
@@ -100,11 +100,9 @@ class Dipartimento:
 
 
 class _afferenza:
-
-    class _link:
-        _impiegato: Impiegato #ovviamente noto alla nascita e immutabile 
-        _dipartimento: Dipartimento #ovviamente noto alla nascita e immutabile  
-        _data_afferenza = date #immutabile, noto alla nascita 
+    _impiegato: Impiegato #ovviamente noto alla nascita e immutabile 
+    _dipartimento: Dipartimento #ovviamente noto alla nascita e immutabile  
+    _data_afferenza = date #immutabile, noto alla nascita 
 
     def __init__(self, impiegato: Impiegato, dipartimento: Dipartimento, data_afferenza: date) -> None:
         self._impiegato = impiegato 
@@ -120,16 +118,16 @@ class _afferenza:
     def data_afferenza(self) -> date:
         return self._data_afferenza 
     
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash((self.impiegato(), self.dipartimento()))
     
     def __eq__(self, other: Any) -> bool:
         if type(self) != type(other) or hash(self) != hash(other):
             return False 
-        return (self.impiegato() == self.dipartimento()) == (other.impiegato(), other.dipartimento())
+        return (self.impiegato(), self.dipartimento()) == (other.impiegato(), other.dipartimento())
 
 
-class Progetto:
+class Progetto: #caso in cui il progetto ha responsabilità su impiegato
     _nome: str #noto alla nascita
     _budget: Importo
     _coinvolti: dict[Impiegato, _imp_prog]
@@ -152,12 +150,20 @@ class Progetto:
         return self._budget
 
     def coinvolti(self) -> frozenset[tuple[Impiegato, _imp_prog]]:
-        return frozenset(self._coinvolti.items())
+        return frozenset(self._coinvolti.values())
         # return frozenset((imp, data) for imp, data in self._coinvolti.items())
 
-    def add_impiegato(self, impiegato:Impiegato, data: date) -> None:
+    def is_coinvolto(self, impiegato: Impiegato) -> bool:
+        return impiegato in self._coinvolti 
+    
+    def __contains__(self, item: Any) -> bool:
+        if not isinstance(item, Impiegato):
+            return False 
+        return self.is_coinvolto(item) 
+
+    def add_impiegato(self, impiegato: Impiegato, data: date) -> None:
         if impiegato in self._coinvolti:
-            raise ValueError(f"L'impiegato {impiegato.nome()} è già coinvolto nel progetto dal {self._coinvolti[impiegato]}")
+            raise KeyError(f"L'impiegato {impiegato.nome()} è già coinvolto nel progetto dal {self._coinvolti[impiegato]}")
         self._coinvolti[impiegato] = data
 
     def add_impiegato_oggi(self, impiegato: Impiegato) -> None:
@@ -168,33 +174,20 @@ class Progetto:
             raise ValueError(f"L'impiegato {impiegato.nome()} non era coinvolto nel progetto")
         del self._coinvolti[impiegato]  
 
-    def is_coinvolto(self, impiegato: Impiegato) -> bool:
-        return impiegato in self._coinvolti 
-
-    def __contains__(self, item: Any) -> bool:
-        if not isinstance(item, Impiegato):
-            return False 
-        return self.is_coinvolto(item) 
-
     # if type(item) != Impiegato
     #   return False 
     # return item in self._coinvolti
     
     '''def is_coinvolto_brutto(self, impiegato: Impiegato) -> bool:
-        #funziona perché abbiamo implementato has ed eq di _imp_progetto
+        #funziona perché abbiamo implementato hash ed eq di _imp_progetto
         l: _imp_progetto = _imp_progetto(self, impiegato, date.today())
         return l in self._impiegati_progetti'''
     
-    def add_impiegato(self, impiegato: Impiegato, data: date) -> None:
+    def add_impiegato2(self, impiegato: Impiegato, data: date) -> None:
         if impiegato in self._coinvolti:
             raise KeyError("Il progetto coinvolge già questo impiegato.")
         l: _imp_prog = _imp_prog(self, impiegato, data)
         self._imp_prog[impiegato] = l
-
-    def remove_impiegato(self, impiegato: Impiegato) -> None:
-        if not impiegato in self._coinvolti:
-            raise KeyError("Il progetto non coinvolge l'impiegato.")
-        del self._coinvolti[impiegato]
 
     def remove_impiegato2(self, impiegato: Impiegato) -> None:
         try: 
@@ -204,23 +197,23 @@ class Progetto:
     
     def data_coinvolgimento(self, impiegato: Impiegato) -> date:
         try:
-            return self._impiegati_progetti[impiegato].data()
+            return self._coinvolti[impiegato].data()
         except KeyError:
             raise KeyError("Il progetto non coinvolge l'impiegato.")
         
     def ultimo_impiegato_coinvolto(self) -> Impiegato:
         if not self._coinvolti():
-            raise RuntimeError("Il progetto non ha impiegati coinvolti.")
+            raise RuntimeError(f"Il progetto {self.nome()} non ha impiegati coinvolti.")
         date_coinvolgimento: set[date] = set()
         for l in self._coinvolti.values():
             date_coinvolgimento.add(l.data())
-       # date_coinvolgimento = [l.data() for l in self._impiegati_progetti.values()]
+       # date_coinvolgimento = set[l.data() for l in self._impiegati_progetti.values()]
         ultima_data: date = max(date_coinvolgimento)
         for imp in self._coinvolti:
             if self.data_coinvolgimento(imp) == ultima_data:
                 return imp
 
-    def ultimo_impiegato_coinvolto(self) -> Impiegato:
+    def ultimo(self) -> Impiegato:
         # restituisce l'impiegato coinvolto nel progetto da più tempo
         # (in caso di impiegati assunti nello stesso giorno, ne restituisce uno scelto in modo arbitrario
         if len(self._coinvolti) == 0:
@@ -233,29 +226,29 @@ class Progetto:
 
 
 class _imp_prog:
-    class _link:
-        _impiegato: Impiegato
-        _progetto: Progetto 
-        _data_afferenza_prog: date 
+    _progetto: Progetto #ovviamente immutabile e noto alla nascita
+    _impiegato: Impiegato #ovviamente immutabile e noto alla nascita
+    _data: date #immutabile e noto alla nascita
 
-        def __init__(self, impiegato: Impiegato, progetto: Progetto, data_afferenza_prog: date):
-            self._impiegato = impiegato 
-            self._progetto = progetto 
-            self._data_afferenza_prog = data_afferenza_prog
-        
-        def get_impiegato(self) -> Impiegato:
-            return self._impiegato 
-        
-        def get_progetto(self) -> Progetto:
-            return self._progetto
-        
-        def get_data_afferenza_prog(self) -> date:
-            return self._data_afferenza_prog
-        
-        def __hash__(self) -> int:
-            return hash(self.get_impiegato(), self.get_progetto)
-        
-        def __eq__(self, other: Any) -> bool:
-            if type(self) != type(other) or hash(self) != hash(other):
-                return False 
-            return (self.get_impiegato(), self.get_progetto()) == (other.get_impiegato(), other.get_progetto())
+    def __init__(self, progetto: Progetto, impiegato: Impiegato,  data: date):
+        self._progetto = progetto 
+        self._impiegato = impiegato 
+        self._data = data
+
+    def progetto(self) -> Progetto:
+        return self._progetto
+    
+    def impiegato(self) -> Impiegato:
+        return self._impiegato 
+    
+    def data(self) -> date:
+        return self._data
+    
+    def __hash__(self) -> int:
+        return hash((self.progetto()), (self.impiegato()))
+    
+    def __eq__(self, other: Any) -> bool:
+        if type(self) != type(other) or hash(self) != hash(other):
+            return False 
+        return (self.progetto(), self.impiegato()) == (other.progetto(), other.impiegato())
+        # ignoro la data, perché due link sono lo stesso link se e solo se coinvolgono la stessa coppia di oggetti, indipendentemente dai valori degli attributi dell'associazione

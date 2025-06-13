@@ -126,10 +126,9 @@ class Dipartimento:
 
 class _afferenza:
 
-    class _link:
-        _impiegato: Impiegato #ovviamente noto alla nascita e immutabile 
-        _dipartimento: Dipartimento #ovviamente noto alla nascita e immutabile  
-        _data_afferenza = date #immutabile, noto alla nascita 
+    _impiegato: Impiegato #ovviamente noto alla nascita e immutabile 
+    _dipartimento: Dipartimento #ovviamente noto alla nascita e immutabile  
+    _data_afferenza = date #immutabile, noto alla nascita 
 
     def __init__(self, impiegato: Impiegato, dipartimento: Dipartimento, data_afferenza: date) -> None:
         self._impiegato = impiegato 
@@ -180,10 +179,10 @@ class Progetto:
     def add_imp_prog(self, imp_prog: _imp_prog) -> None:
         self._imp_prog.add(imp_prog)
 
-    def _add_link_prog(self, l: imp_prog._link) -> None:
+    def _add_link_prog(self, l: _imp_prog._link) -> None:
         if l.impiegato() in self._coinvolti:
             raise KeyError("")
-        self._coinvolti[impiegato] = data
+        self._coinvolti[impiegato] = l
 
     def remove_impiegato_progetto(self, impiegato: Impiegato) -> None:
         if not impiegato in self._coinvolti:
@@ -254,16 +253,19 @@ class Progetto:
                 return impiegato
 
 
-class imp_prog:
+class _imp_prog:
     
     @classmethod
-    def add(cls, progetto: Progetto, impiegato: Impiegato, data: date) -> _link:
+    def add(cls, progetto: Progetto, impiegato: Impiegato, data: date) -> None:
         l = cls._link(progetto, impiegato, data)
         progetto._add_link_imp_prog(l)
         impiegato._add_link_imp_prog(l)
         return l 
     
+    @classmethod
     def remove(cls, l: _link) -> None:
+        if l() is None:
+            raise ValueError("Non può essere None.")
         l.progetto()._remove_link_imp_prog(l)
         l.impiegato()._remove_link_imp_prog(l)
         del l 
