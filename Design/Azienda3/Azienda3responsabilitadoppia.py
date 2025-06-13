@@ -260,7 +260,6 @@ class _imp_prog:
         l = cls._link(progetto, impiegato, data)
         progetto._add_link_imp_prog(l)
         impiegato._add_link_imp_prog(l)
-        return l 
     
     @classmethod
     def remove(cls, l: _link) -> None:
