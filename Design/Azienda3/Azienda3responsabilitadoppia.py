@@ -11,7 +11,7 @@ class Impiegato:
     _nascita: date #non facciamo il set perché è un dato immutabile e noto alla nascita
     _stipendio: Importo #noto alla nascita
     _afferenza: _afferenza | None #da associazione 'afferenza[0..1]' possibilmente non noto alla nascita
-    _progetti: dict[Progetto, _imp_prog._link]
+    _progetti: dict[Progetto, imp_prog._link]
     
     def __init__(self, nome: str, cognome: str, nascita: date, stipendio: Importo, dipartimento_aff: Dipartimento | None = None, data_afferenza: date | None = None) -> None:
         self.set_nome(nome)
@@ -47,50 +47,38 @@ class Impiegato:
     
     def cognome(self) -> str:
         return self._cognome 
-    
+
     def set_nome(self, nome: str) -> None:
         self._nome = nome
 
     def set_cognome(self, cognome: str) -> None:
         self._cognome = cognome 
-    
-    def set_stipendio(self, stipendio: Importo) -> None:
-        self._stipendio = stipendio 
 
     def nascita(self) -> date:
         return self._nascita
     
     def stipendio(self) -> Importo:
         return self._stipendio 
-
-    # def __str__(self) -> str:
-    #     afferenza: str = f"che afferisce al dip. {self.afferenza().nome()} dal {self.data_afferenza()}" if self.dipartimento_afferenza else ""
-    #     return f"Impiegato: {self.nome()} {self.cognome()} {afferenza}"
-
-    def progetti(self) -> frozenset[_imp_prog._link]:
+    
+    def set_stipendio(self, stipendio: Importo) -> None:
+        self._stipendio = stipendio
+    
+    def progetti(self) -> frozenset[imp_prog._link]:
         return frozenset(self._progetti.values())
     
-    def add_link_imp_prog(self, l: _imp_prog._link) -> None:
-        if l.progetto in self._progetti:
-            raise KeyError("Lavoro già nel progetto")
+    def add_link_imp_prog(self, l: imp_prog._link) -> None:
+        if l.impiegato() != self:
+            raise ValueError("Il link non coinvolge me!")
+        if l.progetto() in self._progetti:
+            raise KeyError("Lavoro già nel progetto.")
         self._progetti[l.progetto()] = l
 
-    def remove_link_imp_prog(self, l: _imp_prog._link) -> None:
-        if l.progetto in self._progetti:
+    def remove_link_imp_prog(self, l: imp_prog._link) -> None:
+        if l.impiegato() != self:
+            raise ValueError("Il link non coinvolge me!")
+        if l.progetto() not in self._progetti:
             raise KeyError("Non lavoravo nel progetto")
         del self._progetti[l.progetto()]
-
-
-    def add_progetto(self, progetto: Progetto, data: date) -> None:
-        if progetto in self._progetti:
-            raise KeyError("L'impiegato non è coinvolto nel progetto")
-        self._progetti[progetto] = _imp_prog(self, progetto, data)
-
-    def remove_progetto(self, progetto: Progetto) -> None:
-        try:
-            del self._progetti[progetto]
-        except KeyError:
-            raise KeyError("L'impiegato non è coinvolto nel progetto")
 
 class Dipartimento:
     _nome: str 
@@ -156,13 +144,12 @@ class _afferenza:
 class Progetto:
     _nome: str #noto alla nascita
     _budget: Importo
-    _imp_prog: set[_imp_prog._link]
+    _coinvolti: dict[Impiegato, imp_prog._link]
 
     def __init__(self, nome: str, budget: Importo) -> None:
         self.set_nome(nome)
         self.set_budget(budget)
         self._coinvolti = dict()
-        self.set_imp_prog = set()
     
     def set_nome(self, nome: str) -> None:
         self._nome = nome 
@@ -176,62 +163,50 @@ class Progetto:
     def budget(self) -> Importo:
         return self._budget
     
-    def add_imp_prog(self, imp_prog: _imp_prog) -> None:
-        self._imp_prog.add(imp_prog)
-
-    def _add_link_prog(self, l: _imp_prog._link) -> None:
-        if l.impiegato() in self._coinvolti:
-            raise KeyError("")
-        self._coinvolti[impiegato] = l
-
-    def remove_impiegato_progetto(self, impiegato: Impiegato) -> None:
-        if not impiegato in self._coinvolti:
-            raise ValueError(f"L'impiegato {impiegato.nome()} non era coinvolto nel progetto")
-        del self._coinvolti[impiegato]  
+    def coinvolti(self) -> frozenset[imp_prog._link]:
+        return frozenset(self._coinvolti.values())
 
     def is_coinvolto(self, impiegato: Impiegato) -> bool:
         return impiegato in self._coinvolti 
-
+    
     def __contains__(self, item: Any) -> bool:
         if not isinstance(item, Impiegato):
             return False 
         return self.is_coinvolto(item) 
-
-    # if type(item) != Impiegato
-    #   return False 
-    # return item in self._coinvolti
     
+    def get_link_imp_prog(self, impiegato: Impiegato) -> imp_prog._link:
+        if impiegato not in self: #oppure not self.is_coinvolto(impiegato)
+            raise KeyError(f"{impiegato.nome()} {impiegato.cognome()} non è coinvolto nel progetto")
+        return self._coinvolti[impiegato]
+
+    def _add_link_imp_prog(self, l: imp_prog._link) -> None:
+        if l.progetto() != self:
+            raise ValueError("Il link non coinvolge me!")
+        if l.impiegato() in self._coinvolti:
+            raise KeyError("Il progetto coinvolge già l'impiegato")
+        self._coinvolti[l.impiegato()] = l
+
+    def _remove_link_imp_prog(self, l: imp_prog._link) -> None:
+        if l.progetto() != self:
+            raise ValueError("Il link non coinvolge me!")
+        if l.impiegato() not in self._coinvolti:
+            raise KeyError("L'impiegato non lavorava in questo progetto.")
+        del self._coinvolti[l.impiegato()]    
+
     '''def is_coinvolto_brutto(self, impiegato: Impiegato) -> bool:
         #funziona perché abbiamo implementato has ed eq di _imp_progetto
         l: _imp_progetto = _imp_progetto(self, impiegato, date.today())
         return l in self._impiegati_progetti'''
     
-    def add_impiegato(self, impiegato: Impiegato, data: date) -> None:
-        if impiegato in self._coinvolti:
-            raise KeyError("Il progetto coinvolge già questo impiegato.")
-        l: _imp_prog = _imp_prog(self, impiegato, data)
-        self._imp_prog(impiegato) = l
-
-    def remove_impiegato(self, impiegato: Impiegato) -> None:
-        if not impiegato in self._coinvolti:
-            raise KeyError("Il progetto non coinvolge l'impiegato.")
-        del self._coinvolti[impiegato]
-
-    def remove_impiegato2(self, impiegato: Impiegato) -> None:
-        try: 
-            del self._coinvolti[impiegato]
-        except KeyError:
-            raise KeyError("Il progetto non coinvolge l'impiegato.")
-    
     def data_coinvolgimento(self, impiegato: Impiegato) -> date:
         try:
-            return self._impiegati_progetti[impiegato].data()
+            return self._coinvolti[impiegato].data()
         except KeyError:
             raise KeyError("Il progetto non coinvolge l'impiegato.")
         
     def ultimo_impiegato_coinvolto(self) -> Impiegato:
         if not self._coinvolti():
-            raise RuntimeError("Il progetto non ha impiegati coinvolti.")
+            raise RuntimeError(f"Il progetto {self.nome()} non ha impiegati coinvolti.")
         date_coinvolgimento: set[date] = set()
         for l in self._coinvolti.values():
             date_coinvolgimento.add(l.data())
@@ -241,57 +216,60 @@ class Progetto:
             if self.data_coinvolgimento(imp) == ultima_data:
                 return imp
 
-    def ultimo_impiegato_coinvolto(self) -> Impiegato:
-        # restituisce l'impiegato coinvolto nel progetto da più tempo
-        # (in caso di impiegati assunti nello stesso giorno, ne restituisce uno scelto in modo arbitrario
-        if len(self._coinvolti) == 0:
-            raise RuntimeError(f"Il progetto {self.nome()} non ha impiegati coinvolti!")
+    def ultimo(self) -> Impiegato:
+        ultimo_imp: Impiegato | None = None
+        ultima_data: date | None = None 
+        if not self.coinvolti(): raise RuntimeError() 
 
-        ultima_data: date = max(self._coinvolti.values())
-        for impiegato, data in self._coinvolti.items():
-            if data == ultima_data:
-                return impiegato
+        for imp, link in self._coinvolti.items():
+            if not ultima_data or link.data() > ultima_data:
+                ultimo_imp = imp 
+                ultima_data = link.data()
+        return ultimo_imp 
 
-
-class _imp_prog:
+class imp_prog:
     
     @classmethod
-    def add(cls, progetto: Progetto, impiegato: Impiegato, data: date) -> None:
+    def add(cls, progetto: Progetto, impiegato: Impiegato, data: date) -> _link:
         l = cls._link(progetto, impiegato, data)
         progetto._add_link_imp_prog(l)
         impiegato._add_link_imp_prog(l)
+        return l
     
     @classmethod
-    def remove(cls, l: _link) -> None:
-        if l() is None:
-            raise ValueError("Non può essere None.")
+    def remove_link(cls, l: _link) -> None:
         l.progetto()._remove_link_imp_prog(l)
         l.impiegato()._remove_link_imp_prog(l)
         del l 
+    
+    @classmethod 
+    def remove(cls, progetto: Progetto, impiegato: Impiegato) -> None:
+        l: cls._link = progetto.get_link_imp_prog(impiegato)
+        cls.remove_link(l)
 
     class _link:
-        _impiegato: Impiegato
-        _progetto: Progetto 
-        _data_afferenza_prog: date 
+        _progetto: Progetto #ovviamente immutabile e noto alla nascita
+        _impiegato: Impiegato #ovviamente immutabile e noto alla nascita
+        _data: date #immutabile e noto alla nascita
 
-        def __init__(self, impiegato: Impiegato, progetto: Progetto, data_afferenza_prog: date):
+        def __init__(self, impiegato: Impiegato, progetto: Progetto, data: date):
             self._impiegato = impiegato 
             self._progetto = progetto 
-            self._data_afferenza_prog = data_afferenza_prog
+            self._data = data
         
-        def get_impiegato(self) -> Impiegato:
-            return self._impiegato 
-        
-        def get_progetto(self) -> Progetto:
+        def progetto(self) -> Progetto:
             return self._progetto
         
-        def get_data_afferenza_prog(self) -> date:
-            return self._data_afferenza_prog
+        def impiegato(self) -> Impiegato:
+            return self._impiegato 
+        
+        def data(self) -> date:
+            return self._data
         
         def __hash__(self) -> int:
-            return hash(self.get_impiegato(), self.get_progetto)
+            return hash(self.impiegato(), self.progetto())
         
         def __eq__(self, other: Any) -> bool:
             if type(self) != type(other) or hash(self) != hash(other):
                 return False 
-            return (self.get_impiegato(), self.get_progetto()) == (other.get_impiegato(), other.get_progetto())
+            return (self.impiegato(), self.progetto()) == (other.impiegato(), other.progetto())
