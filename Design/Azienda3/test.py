@@ -1,5 +1,5 @@
 from custom_types import *
-from Azienda3 import *
+from Design.Azienda3.Azienda3senzaimp_prog import *
 from datetime import date, timedelta
 
 

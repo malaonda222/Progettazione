@@ -130,7 +130,7 @@ class _afferenza:
 class Progetto: #caso in cui il progetto ha responsabilità su impiegato
     _nome: str #noto alla nascita
     _budget: Importo
-    _coinvolti: dict[Impiegato, _imp_prog]
+    _coinvolti: dict[Impiegato, date]
 
     def __init__(self, nome: str, budget: Importo) -> None:
         self.set_nome(nome)
@@ -149,8 +149,8 @@ class Progetto: #caso in cui il progetto ha responsabilità su impiegato
     def budget(self) -> Importo:
         return self._budget
 
-    def coinvolti(self) -> frozenset[_imp_prog]:
-        return frozenset(self._coinvolti.values())
+    def coinvolti(self) -> frozenset[tuple[Impiegato, date]]:
+        return frozenset(self._coinvolti.items())
         # return frozenset((imp, data) for imp, data in self._coinvolti.items())
 
     def is_coinvolto(self, impiegato: Impiegato) -> bool:
@@ -225,31 +225,3 @@ class Progetto: #caso in cui il progetto ha responsabilità su impiegato
             if data == ultima_data:
                 return impiegato
 
-
-class _imp_prog:
-    _progetto: Progetto #ovviamente immutabile e noto alla nascita
-    _impiegato: Impiegato #ovviamente immutabile e noto alla nascita
-    _data: date #immutabile e noto alla nascita
-
-    def __init__(self, progetto: Progetto, impiegato: Impiegato,  data: date):
-        self._progetto = progetto 
-        self._impiegato = impiegato 
-        self._data = data
-
-    def progetto(self) -> Progetto:
-        return self._progetto
-    
-    def impiegato(self) -> Impiegato:
-        return self._impiegato 
-    
-    def data(self) -> date:
-        return self._data
-    
-    def __hash__(self) -> int:
-        return hash((self.progetto()), (self.impiegato()))
-    
-    def __eq__(self, other: Any) -> bool:
-        if type(self) != type(other) or hash(self) != hash(other):
-            return False 
-        return (self.progetto(), self.impiegato()) == (other.progetto(), other.impiegato())
-        # ignoro la data, perché due link sono lo stesso link se e solo se coinvolgono la stessa coppia di oggetti, indipendentemente dai valori degli attributi dell'associazione

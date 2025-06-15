@@ -210,7 +210,6 @@ class Nazione:
         return frozenset(self._citta_nazione)
     
 
-
 class _partenza:
 
     class _link:
