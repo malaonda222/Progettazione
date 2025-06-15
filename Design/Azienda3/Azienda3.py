@@ -149,7 +149,7 @@ class Progetto: #caso in cui il progetto ha responsabilità su impiegato
     def budget(self) -> Importo:
         return self._budget
 
-    def coinvolti(self) -> frozenset[tuple[Impiegato, _imp_prog]]:
+    def coinvolti(self) -> frozenset[_imp_prog]:
         return frozenset(self._coinvolti.values())
         # return frozenset((imp, data) for imp, data in self._coinvolti.items())
 
@@ -165,6 +165,12 @@ class Progetto: #caso in cui il progetto ha responsabilità su impiegato
         if impiegato in self._coinvolti:
             raise KeyError(f"L'impiegato {impiegato.nome()} è già coinvolto nel progetto dal {self._coinvolti[impiegato]}")
         self._coinvolti[impiegato] = data
+    
+    def add_impiegato2(self, impiegato: Impiegato, data: date) -> None:
+        if impiegato in self._coinvolti:
+            raise KeyError("Il progetto coinvolge già questo impiegato.")
+        l: _imp_prog = _imp_prog(self, impiegato, data)
+        self._imp_prog[impiegato] = l
 
     def add_impiegato_oggi(self, impiegato: Impiegato) -> None:
         self.add_impiegato(impiegato, date.today())
@@ -174,6 +180,13 @@ class Progetto: #caso in cui il progetto ha responsabilità su impiegato
             raise ValueError(f"L'impiegato {impiegato.nome()} non era coinvolto nel progetto")
         del self._coinvolti[impiegato]  
 
+    def remove_impiegato2(self, impiegato: Impiegato) -> None:
+        try: 
+            del self._coinvolti[impiegato]
+        except KeyError:
+            raise KeyError("Il progetto non coinvolge l'impiegato.")
+    
+
     # if type(item) != Impiegato
     #   return False 
     # return item in self._coinvolti
@@ -182,19 +195,7 @@ class Progetto: #caso in cui il progetto ha responsabilità su impiegato
         #funziona perché abbiamo implementato hash ed eq di _imp_progetto
         l: _imp_progetto = _imp_progetto(self, impiegato, date.today())
         return l in self._impiegati_progetti'''
-    
-    def add_impiegato2(self, impiegato: Impiegato, data: date) -> None:
-        if impiegato in self._coinvolti:
-            raise KeyError("Il progetto coinvolge già questo impiegato.")
-        l: _imp_prog = _imp_prog(self, impiegato, data)
-        self._imp_prog[impiegato] = l
 
-    def remove_impiegato2(self, impiegato: Impiegato) -> None:
-        try: 
-            del self._coinvolti[impiegato]
-        except KeyError:
-            raise KeyError("Il progetto non coinvolge l'impiegato.")
-    
     def data_coinvolgimento(self, impiegato: Impiegato) -> date:
         try:
             return self._coinvolti[impiegato].data()

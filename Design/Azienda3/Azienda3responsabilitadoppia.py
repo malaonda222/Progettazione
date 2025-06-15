@@ -67,9 +67,9 @@ class Impiegato:
         return frozenset(self._progetti.values())
     
     def add_link_imp_prog(self, l: imp_prog._link) -> None:
-        if l.impiegato() != self:
+        if l.impiegato() != self: #controlla che l'impiegato contenuto nel link sia proprio questo oggetto Impiegato
             raise ValueError("Il link non coinvolge me!")
-        if l.progetto() in self._progetti:
+        if l.progetto() in self._progetti: #verifica che l'impiegato è già registrato nel progetto 
             raise KeyError("Lavoro già nel progetto.")
         self._progetti[l.progetto()] = l
 
@@ -112,7 +112,7 @@ class Dipartimento:
         self._impiegati.remove(afferenza)
 
 
-class _afferenza:
+class _afferenza: #è una relazione (si crea l'oggetto e si usa)
 
     _impiegato: Impiegato #ovviamente noto alla nascita e immutabile 
     _dipartimento: Dipartimento #ovviamente noto alla nascita e immutabile  
@@ -138,7 +138,7 @@ class _afferenza:
     def __eq__(self, other: Any) -> bool:
         if type(self) != type(other) or hash(self) != hash(other):
             return False 
-        return (self.impiegato() == self.dipartimento()) == (other.impiegato(), other.dipartimento())
+        return (self.impiegato(), self.dipartimento()) == (other.impiegato(), other.dipartimento())
 
 
 class Progetto:
@@ -227,7 +227,8 @@ class Progetto:
                 ultima_data = link.data()
         return ultimo_imp 
 
-class imp_prog:
+class imp_prog: #classe factory con metodi di classe per creare e rimuovere il collegamento tra un Impiegato e un Progetto
+    #classe manager che gestisce come creare il legame (oggetto _link) tra impiegato e progetto
     
     @classmethod
     def add(cls, progetto: Progetto, impiegato: Impiegato, data: date) -> _link:
@@ -244,7 +245,7 @@ class imp_prog:
     
     @classmethod 
     def remove(cls, progetto: Progetto, impiegato: Impiegato) -> None:
-        l: cls._link = progetto.get_link_imp_prog(impiegato)
+        l: imp_prog._link = progetto.get_link_imp_prog(impiegato)
         cls.remove_link(l)
 
     class _link:
