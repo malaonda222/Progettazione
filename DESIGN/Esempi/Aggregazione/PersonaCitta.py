@@ -1,5 +1,17 @@
 from __future__ import annotations
 
+class Citta:
+    _nome: str 
+
+    def __init__(self, nome: str) -> None:
+        self.set_nome(nome)
+
+    def set_nome(self, nome: str) -> None:
+        self._nome = nome  
+    
+    def nome(self) -> str:
+        return self._nome  
+
 class Persona:
     _nome: str 
     _ha_visitato: set[Citta]
@@ -23,25 +35,21 @@ class Persona:
         return self._ha_visitato.remove(c)
     
     def ha_visitato(self) -> frozenset[Citta]:
-        return frozenset(self._ha_visitato)    
+        return frozenset(self._ha_visitato)  
 
+    def __str__(self):
+        citta_str = "\n- ".join(citta.nome() for citta in self.ha_visitato()) 
+        return f"{self._nome} ha visitato:\n-{citta_str}"
 
-class Citta:
-    _nome: str 
-
-    def __init__(self, nome: str):
-        self.set_nome(nome)
-
-    def set_nome(self, nome: str):
-        self._nome = nome  
-    
-    def nome(self) -> str:
-        return self._nome 
 
 
 if __name__ == '__main__':
     c1: Citta = Citta("Roma")
     c2: Citta = Citta("Milano")
+    c3: Citta = Citta("Edimburgo")
+    c4: Citta = Citta("Londra")
+
+
 
     p1: Persona = Persona("Alice")
 
@@ -50,5 +58,7 @@ if __name__ == '__main__':
     p1.add_ha_visitato(c2)
 
     p1.remove_ha_visitato(c1)
+
+    print(p1)
 
 

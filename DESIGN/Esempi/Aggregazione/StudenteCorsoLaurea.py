@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 class Studente:
-    _nome: str #immutabile
+    _nome: str
     _iscritto: CorsoDiLaurea
 
     def __init__(self, nome: str, iscritto: CorsoDiLaurea) -> None:
@@ -20,6 +20,8 @@ class Studente:
     def iscritto(self) -> CorsoDiLaurea:
         return self._iscritto
     
+    def __str__(self) -> str:
+        return f"Lo studente {self._nome} è iscritto nel corso di laurea {self._iscritto.nome()}"
     
 
 class CorsoDiLaurea:
@@ -29,12 +31,17 @@ class CorsoDiLaurea:
         self._nome = nome 
     
     def nome(self) -> str:
-        self._nome 
+        return self._nome 
+
 
 if __name__ == '__main__':
 
     c1: CorsoDiLaurea = CorsoDiLaurea("Informatica")
-    c2: CorsoDiLaurea = CorsoDiLaurea("Fisica")
+    c2: CorsoDiLaurea = CorsoDiLaurea("Economia")
 
     s1: Studente = Studente("Alice", iscritto=c1)
-    s1.set_iscritto(c2)
+    s2: Studente = Studente("Gianni", iscritto=c2)
+
+    s1.set_iscritto(c1)
+    print(s1)
+    print(s2)
