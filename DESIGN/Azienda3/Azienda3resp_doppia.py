@@ -239,8 +239,8 @@ class imp_prog: #classe factory con metodi di classe per creare e rimuovere il c
     
     @classmethod
     def remove_link(cls, l: _link) -> None:
-        l.progetto()._remove_link_imp_prog(l)
-        l.impiegato()._remove_link_imp_prog(l)
+        l.progetto._remove_link_imp_prog(l)
+        l.impiegato._remove_link_imp_prog(l)
         del l 
     
     @classmethod 

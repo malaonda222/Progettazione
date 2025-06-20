@@ -37,7 +37,7 @@ class Persona:
     def ha_visitato(self) -> frozenset[Citta]:
         return frozenset(self._ha_visitato)  
 
-    def __str__(self):
+    def __str__(self) -> str:
         citta_str = "\n- ".join(citta.nome() for citta in self.ha_visitato()) 
         return f"{self._nome} ha visitato:\n-{citta_str}"
 
