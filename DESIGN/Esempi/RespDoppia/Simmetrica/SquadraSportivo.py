@@ -1,5 +1,5 @@
 from __future__ import annotations
-from custom_types import *
+from DESIGN.Esempi.RespDoppia.Simmetrica.custom_types import *
 
 
 class partita:

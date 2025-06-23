@@ -1,5 +1,6 @@
 from __future__ import annotations
-from custom_types import *
+from DESIGN.Esempi.RespDoppia.Simmetrica.custom_types import *
+import statistics
 
 class Studente:
     _nome: str 
@@ -32,6 +33,14 @@ class Studente:
             raise KeyError("Non sono coinvolto nel link")
         del self._esami[l.modulo()]
 
+    def media(self) -> float|None:
+        try: 
+            return statistics.mean(
+                [float(l().voto()) for l in self.esami()]
+            )
+        except statistics.StatisticsError:
+            return None 
+        
 
 class Modulo:
     _nome: str 
@@ -62,8 +71,8 @@ class Modulo:
             raise ValueError("Il link non coinvolge me!")
         if l.studente() not in self._esami:
             raise KeyError("Non sono coinvolto nel link.")
-        del self._esami[l.studente()]
-    
+        del self._esami[l.studente()]    
+
 
 class esame:
     @classmethod
@@ -80,7 +89,6 @@ class esame:
         l().studente()._remove_link_esame(l())
         l().modulo()._remove_link_esame(l())
         del l 
-
 
     class _link:
         _studente: Studente 
@@ -108,3 +116,7 @@ class esame:
         if type(self) != type(other) or hash(self) != hash(other):
             return False 
         return (self.studente(), self.modulo() == other.studente(), other.modulo())
+    
+    def __repr__(self) -> str:
+        return f"_esame._link(nome={self.studente().nome()}, modulo={self.modulo().nome(),}, voto={self.voto()})"
+    

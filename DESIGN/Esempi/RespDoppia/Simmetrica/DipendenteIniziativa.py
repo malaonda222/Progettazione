@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import date
-from custom_types import *
+from DESIGN.Esempi.RespDoppia.Simmetrica.custom_types import *
 from typing import *
 
 class Dipendente:
