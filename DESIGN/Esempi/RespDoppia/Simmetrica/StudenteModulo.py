@@ -119,4 +119,9 @@ class esame:
     
     def __repr__(self) -> str:
         return f"_esame._link(nome={self.studente().nome()}, modulo={self.modulo().nome(),}, voto={self.voto()})"
-    
+
+
+s1 = Studente("Marco")
+s2 = Studente("Riccardo")
+
+m1 = Modulo("")

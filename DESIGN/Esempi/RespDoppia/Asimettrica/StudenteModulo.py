@@ -45,17 +45,17 @@ class Studente:
         return self._nome 
     
     def add_link_esame(self, m: Modulo, v: Voto) -> None:
-        l = _esame._link(self, m, v)
         if m in self._esami:
             raise KeyError("Link duplicato.")
-        self._esami.add(l) 
-        m._add_link_esame(l)
+        l = _esame._link(self, m, v)
+        self._esami[m] = l
+        m._add_link_esame(l) #l'laltra classe non cambia
 
     def remove_link_esame(self, l: _esame._link) -> None:
-        if l().studente() is not self:
+        if l.studente() is not self:
             raise ValueError("Il link non mi riguarda.")
-        del self._esami[l().modulo()]
-        l().modulo()._remove_link_esame(l())
+        del self._esami[l.modulo()]
+        l.modulo()._remove_link_esame(l)
         del l 
     
     def esami(self) -> frozenset[_esame._link]:
