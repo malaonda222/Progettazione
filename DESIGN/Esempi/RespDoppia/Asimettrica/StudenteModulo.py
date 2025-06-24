@@ -1,91 +1,10 @@
 from __future__ import annotations
 from custom_types import *
 import statistics 
+import weakref
   
 
-class Modulo:
-    _nome: str 
-    _esami: dict[Studente, _esame._link]
-
-    def __init__(self, nome: str) -> None:
-        self._nome = nome 
-        self._esami = dict()
-
-    def nome(self) -> str:
-        return self._nome 
-    
-    def add_link_esame(self, l: _esame._link) -> None:
-        if l.modulo() is not self:
-            raise ValueError("Link non mi riguarda")
-        if l.studente() in self._esami:
-            raise KeyError("Link duplicato")
-        self._esami[l.studente()] = l
-
-    def remove_link_esame(self, l: _esame._link) -> None:
-        if l.modulo() is not self:
-            raise ValueError("Il link non mi riguarda.")
-        del self._esami[l.studente()]
-
-    def __repr__(self) -> str:
-        return f"Modulo(nome={self._nome})"    
-
-    def esami(self) -> frozenset[_esame._link]:
-        return frozenset(self._esame._link.values())
-    
-
-class Studente:
-    _nome: str 
-    _esami: dict[Modulo, _esame._link]
-
-    def __init__(self, nome: str) -> None:
-        self._nome = nome 
-        self._esami = dict()
-    
-    def nome(self) -> str:
-        return self._nome 
-    
-    def add_link_esame(self, m: Modulo, v: Voto) -> None:
-        if m in self._esami:
-            raise KeyError("Link duplicato.")
-        l = _esame._link(self, m, v)
-        self._esami[m] = l
-        m._add_link_esame(l) #l'laltra classe non cambia
-
-    def remove_link_esame(self, l: _esame._link) -> None:
-        if l.studente() is not self:
-            raise ValueError("Il link non mi riguarda.")
-        del self._esami[l.modulo()]
-        l.modulo()._remove_link_esame(l)
-        del l 
-    
-    def esami(self) -> frozenset[_esame._link]:
-        return frozenset(self._esami.values())
-    
-    def media(self) -> float|None:
-        try:
-            return statistics.mean(
-                [float(l.voto()) for l in self.esami()]
-            )
-        except statistics.StatisticsError:
-            return None
-        
-    def __repr__(self)-> str:
-        result:str = f"Studente({self._nome}, esami=("
-        esami = self.esami()
-        if esami:
-            for l in esami:
-                result += f"\n                  - {str(l)}"
-            result += "\n                "
-    
-        result += f"), media={self.media()}"
-    
-        if esami:
-            result += "\n"
-        
-        result += ")"
-        return result
-
-class _esame:
+class _esame: #classe privata perché la gestione è asimettrica 
     class _link:
         _studente: Studente
         _modulo: Modulo
@@ -109,12 +28,99 @@ class _esame:
             return hash((self.studente(), self.modulo()))
         
         def __eq__(self, other: Any) -> bool:
-            if type(self) != type(other) or hash(self) != self(other):
+            if type(self) != type(other) or hash(self) != hash(other):
                 return False 
-            return hash((self.studente(), self.modulo()) == (other.studente(). other.modulo()))
+            return (self.studente(), self.modulo()) == (other.studente(), other.modulo())
         
         def __repr__(self) -> str:
             return f"_esame._link(nome='{self.studente().nome()}', modulo='{self.modulo().nome()}', voto={self.voto()})"
+
+
+class Modulo:
+    _nome: str 
+    _esami: dict[Studente, _esame._link]
+
+    def __init__(self, nome: str) -> None:
+        self._nome = nome 
+        self._esami = dict()
+
+    def nome(self) -> str:
+        return self._nome 
+    
+    def esami(self) -> frozenset[_esame._link]:
+        return frozenset(self._esame._link.values())
+    
+    def esame(self, studente: Studente) -> _esame._link:
+        return self._esami[studente]
+    
+    def _add_link_esame(self, l: _esame._link) -> None: #metodo che non verrà usato dalla classe Modulo ma che verrà richiamato dalla classe Studente
+        if l.modulo() is not self:
+            raise ValueError("Questo link non mi coinvolge")
+        if l.studente() in self._esami:
+            raise KeyError(f"Link duplicato ({l.studente()}, {self}) non consentito")
+        self._esami[l.studente()] = l
+
+    def _remove_link_esame(self, l: _esame._link) -> None: #metodo che non verrà usato dalla classe Modulo ma che verrà richiamato dalla classe Studente
+        if l.modulo() is not self:
+            raise ValueError("Il link non mi riguarda.")
+        del self._esami[l.studente()]
+
+    def __repr__(self) -> str:
+        return f"Modulo(nome={self._nome})"    
+
+
+class Studente:
+    _nome: str 
+    _esami: dict[Modulo, _esame._link]
+
+    def __init__(self, nome: str) -> None:
+        self._nome = nome 
+        self._esami = dict()
+    
+    def nome(self) -> str:
+        return self._nome 
+    
+    def esami(self) -> frozenset[_esame._link]:
+        return frozenset(self._esami.values())
+    
+    def add_link_esame(self, m: Modulo, v: Voto) -> None:
+        l = _esame._link(self, m, v)
+        if m in self._esami:
+            raise KeyError("Link duplicato.")
+        self._esami[m] = l
+        m._add_link_esame(l) #l'altra classe non cambia
+
+    def remove_link_esame(self, l: _esame._link) -> None:
+        if l.studente() is not self:
+            raise ValueError("Il link non mi riguarda.")
+        del self._esami[l.modulo()]
+        l.modulo()._remove_link_esame(l)
+        del l 
+    
+
+    def media(self) -> float|None:
+        try:
+            return statistics.mean(
+                [float(l.voto()) for l in self.esami()]
+            )
+        except statistics.StatisticsError:
+            return None
+        
+    def __repr__(self)-> str:
+        result:str = f"Studente({self._nome}, esami=("
+        esami = self.esami()
+        if esami:
+            for l in esami:
+                result += f"\n                  - {str(l)}"
+            result += "\n                "
+    
+        result += f"), media={self.media()}"
+    
+        if esami:
+            result += "\n"
+        
+        result += ")"
+        return result
 
 
 
