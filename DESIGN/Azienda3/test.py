@@ -1,6 +1,6 @@
 from custom_types import *
-from Design.Azienda3.Azienda3senzaimp_prog import *
 from datetime import date, timedelta
+from Azienda3resp_doppia import *
 
 
 vendite: Dipartimento = Dipartimento(nome="vendite", telefono=Telefono("5265496851"))
