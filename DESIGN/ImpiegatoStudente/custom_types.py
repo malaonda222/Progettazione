@@ -31,6 +31,12 @@ class Genere(StrEnum):
     donna = auto()
 
 
+class Ruolo(StrEnum):
+    segretario = auto()
+    direttore = auto()
+    progettista = auto()
+
+
 class DataGE1895(date):
     def __new__(cls, year: int, month: int, day: int) -> Self: #self perché deve costruire un nuovo oggetto della classe 
         if year < 1895:

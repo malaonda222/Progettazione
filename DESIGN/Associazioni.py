@@ -1,4 +1,4 @@
-from custom_types import *
+from DESIGN.ImpiegatoStudente.custom_types import *
 
 
 class Modulo:
