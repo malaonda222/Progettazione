@@ -50,7 +50,7 @@ class CodiceFiscale(str):
         if re.fullmatch(r'^[A-Z]{6}[0-9]{2}[A-Z]{1}[0-9]{2}[A-Z]{1}[0-9]{3}[A-Z]{1}$', cff):
             return super().__new__(cls, cff)
         raise ValueError(f"{cff} non è un codice fiscale italiano valido.")
-
+    
 
 class CodiceFiscale:
     cf: str
@@ -59,6 +59,7 @@ class CodiceFiscale:
             self.cf = cf
         else:
             raise ValueError(f"{cf} non è un codice fiscale italiano valido.")
+
 
 
 class Indirizzo:

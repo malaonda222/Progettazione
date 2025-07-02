@@ -1,5 +1,5 @@
 from __future__ import annotations
-from DESIGN.ImpiegatoStudente.custom_types import *
+from custom_types import *
 from datetime import date
 
 class Persona:
