@@ -141,13 +141,9 @@ class Asta(OggettoDelPost):
     
 
 class CompraloSubito(OggettoDelPost):
-    _prezzo: FloatGZ
 
     def __init__(self, *, descrizione: str, anni_garanzia: IntGEZ, anni_garanzia2: IntGE2| None = None, pubblicazione: datetime, condizione: Condizioni|None = None, prezzo: FloatGZ):
         super().__init__(descrizione=descrizione, anni_garanzia=anni_garanzia, anni_garanzia2=anni_garanzia2|None, pubblicazione=pubblicazione, condizione=condizione)
-        self.set_prezzo(prezzo)
-
-        if not prezzo():
 
 
         if condizione is not None:
