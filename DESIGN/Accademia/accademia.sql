@@ -91,3 +91,5 @@ insert into Progetto(id, nome, inizio, fine, budget) values (47889, 'Security', 
 insert into Progetto(id, nome, inizio, fine, budget) values (42163, 'R3', '18/05/2025', '16/10/2025', 14000);
 insert into Progetto(id, nome, inizio, fine, budget) values (49631, 'Tor93', '17/07/2025', '19/09/2026', 18000);
 
+
+
