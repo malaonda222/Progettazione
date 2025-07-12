@@ -1,21 +1,30 @@
-from abc import ABC, abstractmethod
-from datetime import *
 from typing import *
 from customtypes import *
 from Utente import *
-from Ebuy.OggettodelPost import *
+from Ebuy.OggettodelPost import Asta
 from Bid import *
 
 
 class asta_bid:
-    _asta: Asta 
-    _bid: Bid 
-
-    def __init__(self, asta: Asta, bid: Bid) -> None:
-        self._asta = asta 
-        self._bid = bid 
-
-    def create_asta_bid(l: _asta_bid) -> link:
-        l
+    class _link:
+        _bid: Bid
+        _asta: Asta 
+        def __init__(self, b: Bid, a: Asta) -> None:
+            self._bid = b
+            self._asta = a 
+        
+        def bid(self) -> Bid:
+            return self._bid 
+        
+        def asta(self) -> Asta:
+            return self._asta 
+        
+        def __hash__(self) -> int:
+            return hash( (self.bid(), self.asta()) )
+        
+        def __eq__(self, other: Any) -> bool:
+            if type(self) != type(other) or hash(self) != hash(other):
+                return False 
+            return (self.bid(), self.asta()) == (other.bid(), other.asta())
 
         

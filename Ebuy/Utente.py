@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from datetime import *
 from typing import *
 from customtypes import *
+from bid_ut import *
 import re
 
 # classe utente 
@@ -37,10 +38,22 @@ class VenditoreProfessionale(Utente):
 
 
 class UtentePrivato(Utente):
+    _bids: set[bid_ut._link]
  
     def __init__(self, *, username: str, data_registrazione: datetime):
         super().__init__(username=username, data_registrazione=data_registrazione)    
+        self._bids = set() 
     
-    def add_link_bid_ut()
+    def bids(self) -> frozenset[bid_ut._link]:
+        return frozenset(self._bids)
+    
+    def _add_link(self, l: bid_ut._link) -> None:
+        if l.utente() is not self:
+            raise ValueError("Il link non fa riferimento a questo utente")
+        if l in self._bids:
+            raise KeyError("Link già presente")
+        self._bids.add(l)
+
+
 
 
