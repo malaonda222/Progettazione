@@ -82,6 +82,7 @@ class Asta(OggettoDelPost):
 
     def __init__(self, *, descrizione: str, anni_garanzia: IntGEZ, prezzo: FloatGZ, anni_garanzia2: IntGE2 | None = None, pubblicazione: datetime, condizione: Condizioni|None = None, prezzo_rialzo: FloatGZ|None = None, scadenza: date|None = None):
         super().__init__(descrizione=descrizione, anni_garanzia=anni_garanzia, prezzo=prezzo, anni_garanzia2=anni_garanzia2, pubblicazione=pubblicazione, condizione=condizione)
+        
         if (prezzo_rialzo is None) != (scadenza is None):
             raise ValueError("Prezzo rialzo e scadenza devono essere entrambi None o entrambi non None")
         
