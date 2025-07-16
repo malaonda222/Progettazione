@@ -174,7 +174,7 @@ class UtentePrivato(Utente):
         return frozenset(self._bids)
     
     def _add_link(self, l: bid_ut._link) -> None:
-        if l.utente() is not self:
+        if l.utentePrivato() is not self:
             raise ValueError("Il link non fa riferimento a questo utente")
         if l in self._bids:
             raise KeyError("Link già presente")
