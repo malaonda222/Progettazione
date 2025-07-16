@@ -57,8 +57,3 @@ class UtentePrivato(Utente):
         if l in self._bids:
             raise KeyError("Link già presente")
         self._bids.add(l)
-
-
-if __name__ == "__main__":
-    utente1 = UtentePrivato("Mario Rossi", )
-    bid1 = Bid(istante=datetime.now(), a=asta1, u=utente1)

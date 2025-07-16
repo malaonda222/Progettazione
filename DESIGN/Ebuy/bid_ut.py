@@ -1,7 +1,7 @@
 from typing import *
 from customtypes import *
 from Utente import *
-from Ebuy.OggettodelPost import UtentePrivato  
+from DESIGN.Ebuy.CodiceCompleto import UtentePrivato  
 from Bid import *
 
 

@@ -1,10 +1,3 @@
-from abc import ABC, abstractmethod
-from datetime import *
-from typing import *
-from customtypes import *
-from Utente import *
-from asta_bid import *
-
 class OggettoDelPost(ABC):
     _descrizione: str #mutabile noto alla nascita
     _anni_garanzia: IntGEZ #mutabile noto alla nascita
@@ -74,56 +67,3 @@ class OggettoDelPost(ABC):
             raise RuntimeError("Non è un oggetto usato")
         return self._condizione
     
-
-class Asta(OggettoDelPost):
-    _prezzo_rialzo: FloatGZ #[0..1]
-    _scadenza: date #[0..1]
-    _bids: set[asta_bid._link]
-
-    def __init__(self, *, descrizione: str, anni_garanzia: IntGEZ, prezzo: FloatGZ, anni_garanzia2: IntGE2 | None = None, pubblicazione: datetime, condizione: Condizioni|None = None, prezzo_rialzo: FloatGZ|None = None, scadenza: date|None = None):
-        super().__init__(descrizione=descrizione, anni_garanzia=anni_garanzia, prezzo=prezzo, anni_garanzia2=anni_garanzia2, pubblicazione=pubblicazione, condizione=condizione)
-        
-        if (prezzo_rialzo is None) != (scadenza is None):
-            raise ValueError("Prezzo rialzo e scadenza devono essere entrambi None o entrambi non None")
-        
-        self.set_prezzo_rialzo(prezzo_rialzo)
-        self.set_scadenza(scadenza)
-        self._bids = set()
-
-    def set_prezzo_rialzo(self, prezzo_rialzo: FloatGZ) -> None:
-        self._prezzo_rialzo = prezzo_rialzo
-    
-    def set_scadenza(self, scadenza: date) -> None:
-        self._scadenza = scadenza 
-
-    def prezzo_rialzo(self) -> FloatGZ | None:
-        return self._prezzo_rialzo
-
-    def scadenza(self) -> date | None:
-        return self._scadenza 
-    
-    def bids(self) -> frozenset[asta_bid._link]:
-        return frozenset(self._bids)
-    
-    def _add_link(self, l: asta_bid._link) -> None:
-        if l.asta() is not self:
-            raise ValueError("Il link non fa riferimento a questa asta")
-        if l in self._bids:
-            raise KeyError("Link già presente")
-        self._bids.add(l)
-
-    
-
-class CompraloSubito(OggettoDelPost):
-
-    def __init__(self, *, descrizione: str, anni_garanzia: IntGEZ, anni_garanzia2: IntGE2| None = None, pubblicazione: datetime, condizione: Condizioni|None = None, prezzo: FloatGZ):
-        super().__init__(descrizione=descrizione, anni_garanzia=anni_garanzia, anni_garanzia2=anni_garanzia2|None, pubblicazione=pubblicazione, condizione=condizione)
-
-        if self.is_nuovo() and self.is_usato():
-            raise ValueError("Un oggetto non può essere sia usato che nuovo")
-    
-    def set_prezzo(self, prezzo: FloatGZ):
-        self._prezzo = prezzo 
-
-    def prezzo(self) -> FloatGZ:
-        return self._prezzo 
