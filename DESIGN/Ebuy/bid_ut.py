@@ -27,4 +27,3 @@ class bid_ut:
             if type(self) != type(other) or hash(self) != hash(other):
                 return False 
             return (self.bid(), self.utentePrivato()) == (other.bid(), other.utentePrivato())
-        

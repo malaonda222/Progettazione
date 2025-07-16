@@ -27,4 +27,4 @@ class asta_bid:
                 return False 
             return (self.bid(), self.asta()) == (other.bid(), other.asta())
 
-        
+
