@@ -4,6 +4,8 @@ from datetime import *
 from typing import *
 from customtypes import *
 
+if TYPE_CHECKING:
+    from bid_ut import bid_ut 
 
 class OggettoDelPost(ABC):
     _descrizione: str #mutabile noto alla nascita
@@ -202,7 +204,7 @@ class Bid:
             return None
         return self._asta_link.asta()
     
-    def utentePrivato(self) -> UtentePrivato | None:
+    def utente_privato(self) -> UtentePrivato | None:
         if not self._utente_link:
             return None
         return self._utente_link.utente()

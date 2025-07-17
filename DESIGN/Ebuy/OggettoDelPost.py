@@ -1,3 +1,8 @@
+from abc import ABC, abstractmethod 
+from customtypes import *
+from datetime import *
+
+
 class OggettoDelPost(ABC):
     _descrizione: str #mutabile noto alla nascita
     _anni_garanzia: IntGEZ #mutabile noto alla nascita
