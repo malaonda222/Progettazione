@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod 
-from customtypes import *
+from DESIGN.Ebuy.CodiceConsegnato.customtypes import *
 from datetime import *
 
 

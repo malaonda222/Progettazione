@@ -2,10 +2,10 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from datetime import *
 from typing import *
-from customtypes import *
+from DESIGN.Ebuy.CodiceConsegnato.customtypes import *
 
 if TYPE_CHECKING:
-    from bid_ut import bid_ut 
+    from DESIGN.Ebuy.CodiceConsegnato.bid_ut import bid_ut 
 
 class OggettoDelPost(ABC):
     _descrizione: str #mutabile noto alla nascita
@@ -14,7 +14,7 @@ class OggettoDelPost(ABC):
     _pubblicazione: datetime #immutabile noto alla nascita
     _is_nuovo: bool #immutabile noto alla nascita
     _is_usato: bool #immutabile noto alla nascita 
-    _condizione: Condizioni | None#[0..1] possibilmente non noto alla nascita 
+    _condizione: Condizioni | None #[0..1] possibilmente non noto alla nascita 
     _prezzo: FloatGZ 
 
     @abstractmethod
@@ -189,7 +189,7 @@ class Bid:
     _utente_link: bid_ut._link | None
 
     def __init__(self, *, istante: datetime, a: Asta, u: UtentePrivato) -> None:
-        self._istante = istante 
+        self._istante =  datetime.datetime.now()
         self._asta_link = None
         self._utente_link = None
 
@@ -227,7 +227,7 @@ class Bid:
 class bid_ut:
     class _link:
         _bid: Bid 
-        _utentePrivato: UtentePrivato
+        _utente_privato: UtentePrivato
 
         def __init__(self, b: Bid, u: UtentePrivato) -> None:
             self._bid = b 
@@ -236,22 +236,23 @@ class bid_ut:
         def bid(self) -> Bid:
             return self._bid 
         
-        def utentePrivato(self) -> UtentePrivato:
-            return self._utentePrivato
+        def utente_privato(self) -> UtentePrivato:
+            return self._utente_privato
         
         def __hash__(self) -> int:
-            return hash( (self.bid(), self.utentePrivato()) )
+            return hash( (self.bid(), self.utente_privato()) )
         
         def __eq__(self, other: Any) -> bool:
             if type(self) != type(other) or hash(self) != hash(other):
                 return False 
-            return (self.bid(), self.utentePrivato()) == (other.bid(), other.utentePrivato())
+            return (self.bid(), self.utente_privato()) == (other.bid(), other.utente_privato())
 
  
 class asta_bid:
     class _link:
         _bid: Bid
         _asta: Asta 
+        
         def __init__(self, b: Bid, a: Asta) -> None:
             self._bid = b
             self._asta = a 
@@ -270,4 +271,3 @@ class asta_bid:
                 return False 
             return (self.bid(), self.asta()) == (other.bid(), other.asta())
         
-

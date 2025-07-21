@@ -1,7 +1,7 @@
 from typing import *
-from customtypes import *
-from DESIGN.Ebuy.CodiceCompleto import *
-from Bid import *
+from DESIGN.Ebuy.CodiceConsegnato.customtypes import *
+from DESIGN.Ebuy.CodiceCompleto.CodiceCompleto import *
+from DESIGN.Ebuy.CodiceConsegnato.Bid import *
 
 
 class asta_bid:

@@ -2,11 +2,11 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from datetime import *
 from typing import *
-from customtypes import *
+from DESIGN.Ebuy.CodiceConsegnato.customtypes import *
 import re
 
 if TYPE_CHECKING:
-    from bid_ut import bid_ut 
+    from DESIGN.Ebuy.CodiceConsegnato.bid_ut import bid_ut 
 
 # classe utente 
 class Utente(ABC):

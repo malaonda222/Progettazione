@@ -7,7 +7,7 @@ import datetime
 
 if TYPE_CHECKING:
     from Bid import Bid
-    from bid_ut import bid_ut
+    from DESIGN.Ebuy.CodiceProf.bid_ut import bid_ut
 
 
 class Utente(ABC):

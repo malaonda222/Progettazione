@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
 from datetime import *
 from typing import *
-from customtypes import *
-from DESIGN.Ebuy.CodiceCompleto import *
-from asta_bid import *
-from bid_ut import *
+from DESIGN.Ebuy.CodiceConsegnato.customtypes import *
+from DESIGN.Ebuy.CodiceCompleto.CodiceCompleto import *
+from DESIGN.Ebuy.CodiceConsegnato.asta_bid import *
+from DESIGN.Ebuy.CodiceConsegnato.bid_ut import *
 # if TYPE_CHECKING:
 #     from bid_ut import _bid_ut 
 

@@ -1,7 +1,7 @@
 from __future__ import annotations
 from customtypes import *
-from bid_ut import bid_ut 
-from asta_bid import asta_bid
+from DESIGN.Ebuy.CodiceProf.bid_ut import bid_ut 
+from DESIGN.Ebuy.CodiceProf.asta_bid import asta_bid
 from OggettoDelPost import Asta 
 from Utente import UtentePrivato 
 

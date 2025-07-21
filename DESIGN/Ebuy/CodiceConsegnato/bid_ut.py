@@ -1,8 +1,8 @@
 from typing import *
-from customtypes import *
-from Utente import *
-from DESIGN.Ebuy.CodiceCompleto import UtentePrivato  
-from Bid import *
+from DESIGN.Ebuy.CodiceConsegnato.customtypes import *
+from DESIGN.Ebuy.CodiceConsegnato.Utente import *
+from DESIGN.Ebuy.CodiceCompleto.CodiceCompleto import UtentePrivato  
+from DESIGN.Ebuy.CodiceConsegnato.Bid import *
 
 
 class bid_ut:

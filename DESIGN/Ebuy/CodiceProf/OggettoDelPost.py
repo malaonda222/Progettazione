@@ -5,7 +5,7 @@ from customtypes import *
 
 if TYPE_CHECKING:
     from Bid import Bid
-    from asta_bid import asta_bid
+    from DESIGN.Ebuy.CodiceProf.asta_bid import asta_bid
 
 import datetime
 

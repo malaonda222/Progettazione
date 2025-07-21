@@ -1,4 +1,4 @@
-from CodiceCompleto import *
+from DESIGN.Ebuy.CodiceCompleto.CodiceCompleto import *
 
 if __name__ == "__main__":
     try:
