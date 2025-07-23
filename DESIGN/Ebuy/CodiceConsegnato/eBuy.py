@@ -2,10 +2,10 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from datetime import *
 from typing import *
-from DESIGN.Ebuy.CodiceConsegnato.customtypes import *
+from DESIGN.Ebuy.CodiceCorretto.customtypes import *
 
 if TYPE_CHECKING:
-    from DESIGN.Ebuy.CodiceConsegnato.bid_ut import bid_ut 
+    from DESIGN.Ebuy.CodiceCorretto.bid_ut import bid_ut 
 
 class OggettoDelPost(ABC):
     _descrizione: str #mutabile noto alla nascita
